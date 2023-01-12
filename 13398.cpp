@@ -91,31 +91,28 @@ int main()
     stale_flippant();
 
     int n; cin >> n;
+    vector<ll> arr(n);
 
-    vl arr(n);
     for (int i=0; i<n; i++) cin >> arr[i];
-    vl rev = arr;
-	reverse(rev.begin(), rev.end());
 
-	vl LIS(n, 1);
-	vl LDS(n, 1);
-	vl LBS(n);
-	
-	for (int i=1; i<n; i++)
-	{
-		for (int j=i-1; j>=0; j--) if (arr[j] < arr[i])
-			LIS[i] = max(LIS[i], LIS[j] + 1);
+    vvl dp(n+1, vl(2, INT_MIN));
 
-		for (int j=i-1; j>=0; j--) if (rev[j] < rev[i])
-			LDS[i] = max(LDS[i], LDS[j] + 1);
-	}
-
-	reverse(LDS.begin(), LDS.end());
+	dp[0][0] = dp[0][1] = INT_MIN;
 
 	for (int i=0; i<n; i++)
-		LBS[i] = LIS[i] + LDS[i] - 1; 
+	{
+		dp[i+1][0] = max(dp[i][0] + arr[i], arr[i]);
+		dp[i+1][1] = max(dp[i][0], dp[i][1] + arr[i]);
+	}
 
-	cout << *max_element(LBS.begin(), LBS.end());
+	ll ans = INT_MIN;
+
+	for (int i=1; i<=n; i++)
+	{
+		ans = max({ans, dp[i][0], dp[i][1]});
+	}
+
+	cout << ans << '\n';
 
     return 0;
 }
