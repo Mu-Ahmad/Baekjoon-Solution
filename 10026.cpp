@@ -1,0 +1,174 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+using namespace std;
+using namespace __gnu_pbds;
+
+#define fi                  first
+#define se                  second
+#define ll                  long long
+#define ull                 unsigned long long
+#define lld                 long double
+#define pb                  push_back
+#define mp                  make_pair
+#define pqb                 priority_queue<int>
+#define pqs                 priority_queue<int,vi,greater<int> >
+#define setbits(x)          __builtin_popcountll(x)
+#define zrobits(x)          __builtin_ctzll(x)
+#define mod                 1000000007
+#define inf                 1e18
+#define ps(x,y)             cout<< fixed << setprecision(y) << x
+#define reset(a, b)         memset(a, b, sizeof(a))
+#define w(x)                int x; cin>>x; while(x--)
+#define finc(s, e, k)       for(int i=s; i<e; i+=k)
+#define f(s, e)             finc(s, e, 1)
+#define frange(x)           finc(0, x, 1)
+#define repeat(x)           frange(x)
+#define all(cont)           cont.begin(), cont.end()
+#define rall(cont)          cont.end(), cont.begin()
+#define mk(arr,n,type)                  type *arr=new type[n];
+#define copyArray(src, des, n, type)    type des[n]; frange(n){des[i] = src[i];}
+//================================
+typedef pair<int, int>      pii;
+typedef pair<ll, ll>        pl;
+typedef vector<int>         vi;
+typedef vector<ll>          vl;
+typedef vector<pii>         vpii;
+typedef vector<pl>          vpl;
+typedef vector<vi>          vvi;
+typedef vector<vl>          vvl;
+template<class T> using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//=================================
+mt19937                                 rng(chrono::steady_clock::now().time_since_epoch().count());
+//=================================
+
+void _print(ll t) {cout << t;}
+void _print(int t) {cout << t;}
+void _print(string t) {cout << t;}
+void _print(char t) {cout << t;}
+void _print(lld t) {cout << t;}
+void _print(double t) {cout << t;}
+void _print(ull t) {cout << t;}
+
+template <class T, class V> void _print(pair <T, V> p) {cout << "{"; _print(p.fi); cout << ","; _print(p.se); cout << "}";}
+template <class T> void _print(vector <T> v) {cout << "[ "; for (T i : v) {_print(i); cout << " ";} cout << "]";}
+template <class T> void _print(set <T> v) {cout << "[ "; for (T i : v) {_print(i); cout << " ";} cout << "]";}
+template <class T> void _print(multiset <T> v) {cout << "[ "; for (T i : v) {_print(i); cout << " ";} cout << "]";}
+template <class T, class V> void _print(map <T, V> v) {cout << "[ "; for (auto i : v) {_print(i); cout << " ";} cout << "]";}
+
+void stale_flippant() {
+    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+    #define deb(x) cout << #x <<" "; _print(x); cout << endl;
+#else
+    #define deb(x)
+#endif
+}
+
+template<class Container>
+void split(const string& str, Container& cont, char delim = ' ') {
+  stringstream ss(str);
+  string token;
+  while (getline(ss, token, delim)) 
+    cont.push_back(token);
+}
+
+ll gcd(ll a,ll b){
+    if(b==0) return a;
+    else return gcd(b,a%b);
+}
+
+ll lcm(ll a,ll b){
+    return a/gcd(a,b)*b;
+}
+
+//=================================
+int main() 
+{
+    stale_flippant();
+
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+
+    int n; cin >> n;
+
+    auto valid = [n](pii p)
+    {
+    	if (p.fi<0 or p.fi>=n or p.se<0 or p.se>=n) return false;
+    	return true;
+    };
+
+    vector <vector<char> > grid(n, vector<char>(n));
+
+    for (int i=0; i<n; i++)
+    	for (int j=0; j<n; j++)
+    		cin >> grid[i][j];
+
+    vvi visited(n, vi(n, false));
+
+    map<char, int> freq;
+
+    for (int i=0; i<n; i++)
+    	for (int j=0; j<n; j++) if (!visited[i][j])
+    	{
+    		// run bfs
+    		queue <pii> q;
+    		q.push({i, j});
+    		visited[i][j] = true;
+    		freq[grid[i][j]]++;
+    		while(q.size())
+    		{
+    			pii curr = q.front(); q.pop();
+
+    			for (int k=0; k<4; k++)
+    			{
+    				pii nxt = {curr.fi + dx[k], curr.se + dy[k]};
+    				if (valid(nxt) and !visited[nxt.fi][nxt.se] and grid[curr.fi][curr.se] == grid[nxt.fi][nxt.se])
+    				{
+    					visited[nxt.fi][nxt.se] = true;
+    					q.push(nxt);
+    				}
+    			}
+    		}
+    	}
+
+    int ans1 = freq['R'] + freq['G'] + freq['B'];
+    freq['R'] = freq['G'] = freq['B'] = 0;
+    visited = vvi(n, vi(n, false));
+
+	for (int i=0; i<n; i++)
+    	for (int j=0; j<n; j++) if (grid[i][j] == 'G')
+    		grid[i][j] = 'R';
+
+     for (int i=0; i<n; i++)
+    	for (int j=0; j<n; j++) if (!visited[i][j])
+    	{
+    		// run bfs
+    		queue <pii> q;
+    		q.push({i, j});
+    		visited[i][j] = true;
+    		freq[grid[i][j]]++;
+    		while(q.size())
+    		{
+    			pii curr = q.front(); q.pop();
+
+    			for (int k=0; k<4; k++)
+    			{
+    				pii nxt = {curr.fi + dx[k], curr.se + dy[k]};
+    				if (valid(nxt) and !visited[nxt.fi][nxt.se] and grid[curr.fi][curr.se] == grid[nxt.fi][nxt.se])
+    				{
+    					visited[nxt.fi][nxt.se] = true;
+    					q.push(nxt);
+    				}
+    			}
+    		}
+    	}
+
+    int ans2 = freq['R'] + freq['G'] + freq['B'];
+
+    cout << ans1 << ' ' << ans2;
+    return 0;
+}
