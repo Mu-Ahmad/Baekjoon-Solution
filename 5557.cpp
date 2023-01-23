@@ -86,25 +86,30 @@ ll lcm(ll a,ll b){
 }
 
 //=================================
-int main() {
+int main() 
+{
     stale_flippant();
 
-    string s, t;
-    cin >> s >> t;
-    vector <vi> dp(s.size()+1, vi(t.size() + 1, 0));
+	int n; cin >> n;
+    vl arr(n);
 
-    int ans = 0;
-    for (int i=1; i<=s.size(); i++)
-    	for (int j=1; j<=t.size(); j++)
-    	{
-    		if (s[i-1] == t[j-1])
-    			dp[i][j] = dp[i-1][j-1] + 1;
-    		else dp[i][j] = 0;
+    for (int i=0; i<n; i++) cin >> arr[i];
 
-    		ans = max(ans, dp[i][j]);
-    	}
+    vvl dp(n+1, vl(21, 0)); //dp[i][k] represents number of ways to make k using first i elements
 
-    cout << ans;
+	dp[0][0] = 1;
+	for (int i=0; i<n-1; i++)
+	{
+		for (int j=0; j<21; j++)
+		{
+			if (i and j-arr[i] >= 0)
+				dp[i+1][j-arr[i]] += dp[i][j];
+			if (j+arr[i] < 21)
+				dp[i+1][j+arr[i]] += dp[i][j];
+		}
+	}
+
+	cout << dp[n-1][arr.back()] << '\n';
 
     return 0;
 }
